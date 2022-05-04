@@ -1,0 +1,4 @@
+#! /bin/bash
+
+pyenv version 2> /dev/null | awk '$1!="system" {print " "$1" "}'
+

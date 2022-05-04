@@ -1,0 +1,97 @@
+#! /bin/bash
+
+
+# get folder name
+#---------------------
+
+env="~/.bin/productivity/env"
+
+if [[ -f $env ]]; then
+    source $env
+else
+    mainFolder="$HOME/.config/productivity"
+fi
+
+folder="$mainFolder/daily/"
+
+
+# file name from date
+#---------------------
+
+day=$(date '+%d')
+month=$(date '+%m')
+year=$(date '+%Y')
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -y|--yesterday)
+            day=$(date -d "yesterday" '+%d')
+            month=$(date -d "yesterday" '+%m')
+            year=$(date -d "yesterday" '+%Y')
+            shift
+            ;;
+        -y|--yesterday)
+            day=$(date -d "yesterday" '+%d')
+            month=$(date -d "yesterday" '+%m')
+            year=$(date -d "yesterday" '+%Y')
+            shift
+            shift
+            ;;
+        -d|--day)
+            day=$2
+            shift
+            shift
+            ;;
+        -m|--month)
+            month=$2
+            shift
+            shift
+            ;;
+        -Y|--year)
+            year=$2
+            shift
+            shift
+            ;;
+        -t|--todo)
+            todo=0
+            shift
+            ;;
+        -*|--*)
+            echo "Unknow option $1"
+            exit 1
+            ;;
+        *)
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+fname="${folder}daily_${day}-${month}-${year}.md"
+
+
+# Create folders and file if not exist
+#---------------------
+
+day=$(date '+%d')
+if [[ ! -d "${folder}" ]]; then
+    mkdir -p "${folder}"
+fi
+
+if [[ ! -f "${fname}" ]]; then
+    echo -e "# Daily ${day}-${month}-${year}\n" >> "${fname}"
+fi
+
+
+# Open files in NeoVim
+#---------------------
+
+day=$(date '+%d')
+
+if [[ ! -z $todo ]]; then
+    nvim -c ":vs ""${mainfolder}""todo.md | winc l" "${fname}"
+else
+    nvim "${fname}"
+fi

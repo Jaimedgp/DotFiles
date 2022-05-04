@@ -1,0 +1,33 @@
+_lineup=$'\e[1A'
+
+function preexec() {
+    timer=$(($(date +%s%0N)/1000000))
+    # echo "the promp is '${(%%)RPS1}'"
+    print -P "%{${_lineup}%}%F{59}%K{075} %D{%H:%M} %k%f%{${PS1}$1%}"
+}
+
+function precmd() {
+    if [ $timer ]; then
+        now=$(($(date +%s%0N)/1000000))
+
+        if [ $(($now-$timer)) -gt 1000 ]; then
+            if [ $(($now-$timer)) -gt 60000 ]; then
+                elapsed=$((($now-$timer)/60000))"m "$((((($now-$timer)%60000))/1000))"s"
+            else
+                elapsed=$((($now-$timer)/1000))"s"
+            fi
+        else
+            elapsed=$(($now-$timer))"ms"
+        fi
+        export RPS1="%K{141}%F{016}%B ${elapsed} %b%f%k"$right
+        unset timer
+    else
+        export RPS1=$right
+    fi
+}
+
+right="%K{059}\$(my_git_branch)%k"
+
+setopt prompt_subst
+export PS1="%K{141}%F{016}\$(pyenv_venv)%f%k%K{102}%F{231} %4~ %f%k%B -> %b"
+export RPS1=$right

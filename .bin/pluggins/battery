@@ -1,0 +1,10 @@
+#! /bin/bash
+
+level=$(cat /sys/class/power_supply/BAT0/capacity)"% "
+
+if [[ $(cat /sys/class/power_supply/BAT0/status) == "Charging" ]]; then
+    cat /sys/class/power_supply/BAT0/capacity 2> /dev/null | awk $'{print " \U26a1 "$0"% "}'
+else
+    cat /sys/class/power_supply/BAT0/capacity 2> /dev/null | awk $'{print " "$0"% "}'
+fi
+#\U26a1

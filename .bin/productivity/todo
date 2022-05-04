@@ -1,0 +1,29 @@
+#! /bin/bash
+
+# get folder name
+#---------------------
+
+i=0
+path="./"
+while [[ $(realpath "${path}") != $HOME ]]; do
+    if [[ -f $(find $path -name "todo.md") ]]; then
+        fname=$(find $path -name "todo.md")
+        break
+    else
+        path="../${path}"
+    fi
+    i+=1
+done
+
+if [[ -z $fname ]]; then
+    env="~/.bin/productivity/env"
+
+    if [[ -f $env ]]; then
+        source $env
+    else
+        mainFolder="$HOME/.config/productivity"
+    fi
+    fname="$mainFolder/todo.md"
+fi
+
+nvim $fname
