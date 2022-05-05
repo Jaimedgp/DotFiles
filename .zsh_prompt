@@ -10,12 +10,10 @@ function precmd() {
     if [ $timer ]; then
         now=$(($(date +%s%0N)/1000000))
 
-        if [ $(($now-$timer)) -gt 1000 ]; then
-            if [ $(($now-$timer)) -gt 60000 ]; then
-                elapsed=$((($now-$timer)/60000))"m "$((((($now-$timer)%60000))/1000))"s"
-            else
-                elapsed=$((($now-$timer)/1000))"s"
-            fi
+        if [ $(($now-$timer)) -gt 60000 ]; then
+            elapsed=$((($now-$timer)/60000))"m "$((((($now-$timer)%60000))/1000))"s"
+        elif [ $(($now-$timer)) -gt 1000 ]; then
+            elapsed=$((($now-$timer)/1000))"s"
         else
             elapsed=$(($now-$timer))"ms"
         fi
