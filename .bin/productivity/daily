@@ -31,12 +31,6 @@ while [[ $# -gt 0 ]]; do
             month=$(date -d "yesterday" '+%m')
             year=$(date -d "yesterday" '+%Y')
             shift
-            ;;
-        -y|--yesterday)
-            day=$(date -d "yesterday" '+%d')
-            month=$(date -d "yesterday" '+%m')
-            year=$(date -d "yesterday" '+%Y')
-            shift
             shift
             ;;
         -d|--day)
