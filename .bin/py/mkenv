@@ -1,0 +1,29 @@
+#! /bin/bash
+
+pythonversion="3.8.10"
+name=${PWD##*/}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -v|--version)
+            pythonversion=$2
+            shift
+            ;;
+        -n|--name)
+            name=$2
+            shift
+            ;;
+        -*|--*)
+            echo "Unknow option $1"
+            exit 1
+            ;;
+        *)
+            name=$1
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+pyenv virtualenv $pythonversion $name 2> /dev/null
+pyenv local $name 2> /dev/null
