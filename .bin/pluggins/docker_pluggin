@@ -7,5 +7,5 @@ else
 fi
 
 if [[ $numDocker -gt 0 ]]; then
-    awk '{print " dockers: "$0" "}' $numDocker
+    echo $numDocker | awk '{print " dockers: "$0" "}'
 fi
