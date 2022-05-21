@@ -109,13 +109,13 @@ function precmd() {
             #export PS1="\e[38;5;16;48;5;141m\] ${elapsed} \e[0m\]$prompt_l"
             export PS1="\e[38;5;16;48;5;117m\] ${elapsed} \e[0m\]$prompt_l"
         elif [[ "$SHELL" == *"zsh"* ]]; then
-            export RPS1="%K{141}%F{016}%B ${elapsed} %b%f%k"$right
+            export RPS1="%K{141}%F{016}%B ${elapsed} %b%f%k"$prompt_r
         fi
 
         unset timer
     else
         if [[ "$SHELL" == *"zsh"* ]]; then
-            export RPS1=$right
+            export RPS1=$prompt_r
         fi
     fi
 }
