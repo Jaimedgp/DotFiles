@@ -1,0 +1,5 @@
+export PS1="\e[152;48;5;244m\]\$(pyenv_venv)\e[0m\]"
+export PS1=$PS1"\e[152;48;5;240m\]\$(my_git_branch)\e[0m\]"
+export PS1=$PS1"\e[152;48;5;244m\] \w \e[0m\]\n"
+export PS1=$PS1"\e[152;48;5;244m\] -> \e[0m\] "
+

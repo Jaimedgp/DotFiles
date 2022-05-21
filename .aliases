@@ -2,13 +2,46 @@
 export PATH=$PATH":$HOME/.bin/py"
 export PATH=$PATH":$HOME/.bin/config"
 export PATH=$PATH":$HOME/.bin/productivity"
+export PATH=$PATH":$HOME/.bin/pluggins"
 export PATH=$PATH":$HOME/.bin/pomodoro-bash"
 export PATH=$PATH":/opt/anaconda3/bin:$PATH"
+
+export LS_COLORS='di=01;38;5;141:ln=01;38;5;117:ex=01;38;5;82:fi=01;38;5;231'
 
 # New alias
 alias sqlitestudio="/opt/SQLiteStudio/sqlitestudio &"
 alias workstation="ssh -XYL  8000:localhost:8888 $remote_usr@$remote_ip"
 alias vim="nvim"
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+i
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+
+# >>> pyenv initialize >>>
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+# <<< pyenv initialize <<<
 
 # Start Tmux
 if [ -z "$TMUX" ]; then
@@ -28,4 +61,61 @@ wksend() {
 # Function to recive files to workstation
 wktake() {
 	scp -r $remote_usr@$remote_ip:~/"$1" "$2"
+}
+
+if [[ "$SHELL" == *"bash"* ]]; then
+    [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+
+    prompt_l="\e[152;48;5;244m\]\$(pyenv_venv)\e[0m\]"
+    prompt_l=$prompt_l"\e[38;5;152;48;5;240m\]\$(my_git_branch)\e[0m\]"
+    prompt_l=$prompt_l"\e[48;5;244m\] \w \e[0m\]\n"
+    prompt_l=$prompt_l"\e[1;38;5;152;48;5;244m\] -> \e[0m\] "
+
+    export PS1=$prompt_l
+
+elif [[ "$SHELL" == *"zsh"* ]]; then
+    prompt_r="%K{059}\$(my_git_branch)%k"
+    prompt_l="%K{141}%F{016}\$(pyenv_venv)%f%k%K{102}%F{231} %4~ %f%k%B -> %b"
+
+    setopt prompt_subst
+    export PS1=$prompt_l
+    export RPS1=$prompt_r
+fi
+
+_lineup=$'\e[1A'
+
+function preexec() {
+    timer=$(($(date +%s%0N)/1000000))
+    if [[ "$SHELL" == *"bash"* ]]; then
+        export PS1="\D{%H:%M}$prompt_l"
+    elif [[ "$SHELL" == *"zsh"* ]]; then
+        print -P "%{${_lineup}%}%F{59}%K{075} %D{%H:%M} %k%f%{${PS1}$1%}"
+    fi
+}
+
+function precmd() {
+    if [ $timer ]; then
+        now=$(($(date +%s%0N)/1000000))
+
+        if [ $(($now-$timer)) -gt 60000 ]; then
+            elapsed=$((($now-$timer)/60000))"m "$((((($now-$timer)%60000))/1000))"s"
+        elif [ $(($now-$timer)) -gt 1000 ]; then
+            elapsed=$((($now-$timer)/1000))"s"
+        else
+            elapsed=$(($now-$timer))"ms"
+        fi
+
+        if [[ "$SHELL" == *"bash"* ]]; then
+            #export PS1="\e[38;5;16;48;5;141m\] ${elapsed} \e[0m\]$prompt_l"
+            export PS1="\e[38;5;16;48;5;117m\] ${elapsed} \e[0m\]$prompt_l"
+        elif [[ "$SHELL" == *"zsh"* ]]; then
+            export RPS1="%K{141}%F{016}%B ${elapsed} %b%f%k"$right
+        fi
+
+        unset timer
+    else
+        if [[ "$SHELL" == *"zsh"* ]]; then
+            export RPS1=$right
+        fi
+    fi
 }
